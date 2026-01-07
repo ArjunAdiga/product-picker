@@ -1,0 +1,84 @@
+.header {
+  font-size: 32px;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.displayProduct {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row;
+}
+.displayVariant {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  margin-left: 24px;
+}
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.productTable {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.product-card {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.product-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.variant-toggle {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.variant-list {
+  margin-top: 8px;
+  padding-left: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.variant-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.row-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.row-header {
+  font-weight: 500;
+  font-size: 24px;
+  color: black;
+  text-align: center;
+  padding: 0px;
+  margin: 0px;
+  min-width: 215px;
+}
