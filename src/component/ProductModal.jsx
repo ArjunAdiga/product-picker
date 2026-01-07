@@ -5,11 +5,11 @@ import { Search, X } from "lucide-react";
 import Divider from "@mui/material/Divider";
 
 const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
-  const [productList, setProductList] = useState([]);
+  const [productList, setProductList] = useState([]); // fetched product list
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState([]); // products selected to be added
   const isPagingRef = useRef(false);
   const lastScrollTopRef = useRef(0);
   const ignoreScrollRef = useRef(false);
@@ -71,6 +71,8 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
   }, [productList]);
 
   const handleScroll = () => {
+    // to handle infinite scroll
+    if (ignoreScrollRef.current) return;
     const el = containerRef.current;
     if (!el || loading) return;
 
@@ -109,6 +111,7 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
   };
 
   const toggleProduct = (product, checked) => {
+    // to select/deselect entire product using checkbox
     setSelectedProduct((prev) => {
       if (checked) {
         return [
@@ -129,6 +132,7 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
   };
 
   const toggleVariant = (product, variant, checked) => {
+    // to select/deselect individual variant using checkbox
     setSelectedProduct((prev) => {
       const existingProduct = prev.find((p) => p.productId === product.id);
 

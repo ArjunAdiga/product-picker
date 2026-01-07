@@ -23,6 +23,7 @@ const IndivudualProduct = ({ item, index, setProduct, handleModal }) => {
   };
 
   const handleDiscount = (e) => {
+    // to handle discount input change
     if (e.target.value < 0) return;
     if (e.target.value > 100) return;
     setDiscountpercent(e.target.value);
@@ -36,11 +37,13 @@ const IndivudualProduct = ({ item, index, setProduct, handleModal }) => {
     handleModal("edit", index);
   };
   const handleRemoveItem = () => {
+    // to remove product from product list
     setProduct((prevProducts) =>
       prevProducts.filter((product) => product.productId !== item.productId)
     );
   };
   const handleRemoveVariant = (variantId) => {
+    // to remove variant from product
     setProduct((prevProducts) =>
       prevProducts.map((product) => {
         if (product.productId === item.productId) {

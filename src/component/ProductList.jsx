@@ -17,9 +17,10 @@ const ProductList = () => {
     setOpenModal(s);
     setEditedIndex(index);
   };
-  const [editedIndex, setEditedIndex] = React.useState(-1);
+  const [editedIndex, setEditedIndex] = React.useState(-1); // state to know whether item is being edited or added
 
   const handleDragEnd = ({ active, over }) => {
+    // this drag end function for dnd-kit to run on drag end of item
     if (!over || active.id === over.id) return;
 
     if (active.id.startsWith("product-") && over.id.startsWith("product-")) {
