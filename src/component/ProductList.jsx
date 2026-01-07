@@ -22,9 +22,6 @@ const ProductList = () => {
   const handleDragEnd = ({ active, over }) => {
     if (!over || active.id === over.id) return;
 
-    // ========================
-    // PRODUCT DRAG
-    // ========================
     if (active.id.startsWith("product-") && over.id.startsWith("product-")) {
       setProduct((items) => {
         const oldIndex = items.findIndex(
@@ -38,14 +35,10 @@ const ProductList = () => {
       });
     }
 
-    // ========================
-    // VARIANT DRAG
-    // ========================
     if (active.id.startsWith("variant:") && over.id.startsWith("variant:")) {
       const [, activeProductId, activeVariantId] = active.id.split(":");
       const [, overProductId, overVariantId] = over.id.split(":");
 
-      // 🚫 Prevent cross-product dragging
       if (activeProductId !== overProductId) return;
 
       setProduct((items) =>
