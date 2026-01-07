@@ -40,7 +40,6 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
     isPagingRef.current = false;
   };
 
-  // Fetch when page changes
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts(page, debouncedSearch);
@@ -85,12 +84,10 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
 
     const nearTop = el.scrollTop <= 5;
 
-    // ⬇️ ONLY paginate down if user is scrolling down
     if (nearBottom && scrollingDown) {
       setPage((prev) => prev + 1);
     }
 
-    // ⬆️ ONLY paginate up if user is scrolling up
     if (nearTop && scrollingUp && page > 1) {
       setPage((prev) => prev - 1);
     }
@@ -111,12 +108,9 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
     onClose();
   };
 
-  console.log(selectedProduct, "selectedProduct");
-
   const toggleProduct = (product, checked) => {
     setSelectedProduct((prev) => {
       if (checked) {
-        // add parent + all variants
         return [
           ...prev.filter((p) => p.productId !== product.id),
           {
@@ -139,7 +133,6 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
       const existingProduct = prev.find((p) => p.productId === product.id);
 
       if (checked) {
-        // add variant
         if (existingProduct) {
           return prev.map((p) =>
             p.productId === product.id
@@ -154,7 +147,6 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
           );
         }
 
-        // add parent with single variant
         return [
           ...prev,
           {
@@ -166,14 +158,12 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
         ];
       }
 
-      // remove variant
       if (!existingProduct) return prev;
 
       const updatedVariants = existingProduct.variants.filter(
         (v) => v.variantId !== variant.id
       );
 
-      // remove parent if no variants left
       if (updatedVariants.length === 0) {
         return prev.filter((p) => p.productId !== product.id);
       }
@@ -207,8 +197,6 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
       indeterminate: selectedCount > 0 && selectedCount < totalVariants,
     };
   };
-
-  console.log(productList, "productList");
 
   return (
     <>

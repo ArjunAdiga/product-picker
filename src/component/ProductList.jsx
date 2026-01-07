@@ -18,7 +18,6 @@ const ProductList = () => {
     setEditedIndex(index);
   };
   const [editedIndex, setEditedIndex] = React.useState(-1);
-  console.log(product, "product");
 
   const handleDragEnd = ({ active, over }) => {
     if (!over || active.id === over.id) return;
