@@ -1,4 +1,10 @@
-import { Button, Checkbox, Dialog, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  CircularProgress,
+  Dialog,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import "./product.css";
 import { Search, X } from "lucide-react";
@@ -223,7 +229,6 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
-            padding: "12px",
           },
         }}
       >
@@ -243,9 +248,12 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
+              marginRight: "12px",
+              marginLeft: "12px",
+              marginTop: "12px",
             }}
           >
-            <p>Select Product</p>
+            <p style={{ padding: "0px", margin: "0px" }}>Select Product</p>
             <X onClick={onClose} style={{ cursor: "pointer" }} />
           </div>
           <Divider
@@ -267,6 +275,8 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
                 padding: "6px 8px",
                 fontSize: "14px",
               },
+              marginRight: "12px",
+              marginLeft: "12px",
             }}
             InputProps={{
               startAdornment: (
@@ -292,70 +302,122 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
             style={{
               flex: 1,
               overflowY: "auto",
-              border: "1px solid #eee",
             }}
           >
-            {productList?.map((item, index) => {
-              const { checked, indeterminate } = getProductSelectionState(item);
-              return (
-                <div key={index}>
-                  <div className="displayProduct">
-                    <Checkbox
-                      checked={checked}
-                      indeterminate={indeterminate}
-                      onChange={(e) => toggleProduct(item, e.target.checked)}
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {" "}
+                <CircularProgress size={32} />{" "}
+              </div>
+            ) : (
+              productList?.map((item, index) => {
+                const { checked, indeterminate } =
+                  getProductSelectionState(item);
+                return (
+                  <div key={index}>
+                    <div
+                      className="displayProduct"
+                      style={{
+                        paddingTop: "12.5px",
+                        paddingBottom: "12.5px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        marginRight: "12px",
+                        marginLeft: "12px",
+                      }}
+                    >
+                      <Checkbox
+                        checked={checked}
+                        indeterminate={indeterminate}
+                        onChange={(e) => toggleProduct(item, e.target.checked)}
+                        sx={{ padding: "0px", marginRight: "8px" }}
+                        height={24}
+                        width={24}
+                      />
+                      <img
+                        src={
+                          item.image.src ||
+                          "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"
+                        }
+                        alt={item.title}
+                        style={{ width: 36, height: 36, objectFit: "cover" }}
+                      />
+                      <p style={{ margin: "0px", padding: "0px" }}>
+                        {" "}
+                        {item.title}
+                      </p>
+                    </div>
+                    <Divider
+                      sx={{ backgroundColor: "#0000001A", height: "1px" }}
+                      flexItem
+                      orientation="vertical"
                     />
-                    <img
-                      src={
-                        item.image.src ||
-                        "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"
-                      }
-                      alt={item.title}
-                      style={{ width: 50, height: 50, objectFit: "cover" }}
-                    />
-                    <p>{item.title}</p>
-                  </div>
-                  <Divider
-                    sx={{ backgroundColor: "#0000001A", height: "1px" }}
-                    flexItem
-                    orientation="vertical"
-                  />
-                  <div className="displayVariant">
-                    {item.variants.map((variant, ind) => (
-                      <>
-                        <div className="displayProduct" key={ind}>
-                          <Checkbox
-                            checked={isVariantChecked(item.id, variant.id)}
-                            onChange={(e) =>
-                              toggleVariant(item, variant, e.target.checked)
-                            }
+                    <div className="displayVariant">
+                      {item.variants.map((variant, ind) => (
+                        <>
+                          <div
+                            className="displayProduct"
+                            key={ind}
+                            style={{
+                              marginTop: "7.5px",
+                              marginBottom: "7.5px",
+                              display: "flex",
+                              alignItems: "center",
+                              marginRight: "12px",
+                              marginLeft: "48px",
+                            }}
+                          >
+                            <Checkbox
+                              checked={isVariantChecked(item.id, variant.id)}
+                              onChange={(e) =>
+                                toggleVariant(item, variant, e.target.checked)
+                              }
+                              sx={{ padding: "0px", marginRight: "8px" }}
+                              height={24}
+                              width={24}
+                            />
+                            <p style={{ margin: "0px", padding: "0px" }}>
+                              {variant.title}
+                            </p>
+                          </div>
+                          <Divider
+                            sx={{ backgroundColor: "#0000001A", height: "1px" }}
+                            flexItem
+                            orientation="vertical"
                           />
-                          <p>{variant.title}</p>
-                        </div>
-                        <Divider
-                          sx={{ backgroundColor: "#0000001A", height: "1px" }}
-                          flexItem
-                          orientation="vertical"
-                        />
-                      </>
-                    ))}
+                        </>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexDirection: "row",
-            }}
-          >
-            <p>{`${selectedProduct?.length} selected`}</p>
-            <div className="buttons">
-              <Button>Cancel</Button>
-              <Button onClick={handleAdd}>Add</Button>
+          <div style={{ borderTop: "1px solid #0000001A" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexDirection: "row",
+                marginRight: "12px",
+                marginLeft: "12px",
+              }}
+            >
+              <p>{`${selectedProduct?.length} selected`}</p>
+              <div className="buttons">
+                <Button variant="outlined">Cancel</Button>
+                <Button variant="contained" onClick={handleAdd}>
+                  Add
+                </Button>
+              </div>
             </div>
           </div>
         </div>

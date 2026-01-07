@@ -16,7 +16,8 @@
   display: flex;
   gap: 8px;
   flex-direction: column;
-  margin-left: 24px;
+  max-height: 600px;
+  overflow-y: auto;
 }
 .buttons {
   display: flex;
