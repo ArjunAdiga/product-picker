@@ -10,7 +10,7 @@ import "./product.css";
 import { Search, X } from "lucide-react";
 import Divider from "@mui/material/Divider";
 
-const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
+const ProductModal = ({ open, onClose, editedIndex, setProduct, product }) => {
   const [productList, setProductList] = useState([]); // fetched product list
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -102,17 +102,73 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
   };
 
   const handleAdd = () => {
-    if (editedIndex !== -1) {
-      setProduct((prev) => {
+    setProduct((prev) => {
+      if (editedIndex !== -1) {
         const updated = [...prev];
+        const removed = updated.splice(editedIndex, 1)[0];
+        let insertAt = editedIndex;
 
-        updated.splice(editedIndex, 1, ...selectedProduct);
+        selectedProduct.forEach((sp) => {
+          let spToInsert = sp;
+          if (removed && sp.productId === removed.productId) {
+            const mergedWithRemoved = [
+              ...removed.variants,
+              ...sp.variants.filter(
+                (v) =>
+                  !removed.variants.some((rv) => rv.variantId === v.variantId)
+              ),
+            ];
+            spToInsert = { ...sp, variants: mergedWithRemoved };
+          }
+
+          const existingIndex = updated.findIndex(
+            (p) => p.productId === spToInsert.productId
+          );
+
+          if (existingIndex > -1) {
+            const existing = updated[existingIndex];
+            const mergedVariants = [
+              ...existing.variants,
+              ...spToInsert.variants.filter(
+                (v) =>
+                  !existing.variants.some((ev) => ev.variantId === v.variantId)
+              ),
+            ];
+            updated[existingIndex] = { ...existing, variants: mergedVariants };
+          } else {
+            updated.splice(insertAt, 0, spToInsert);
+            insertAt++;
+          }
+        });
 
         return updated;
+      }
+
+      const map = new Map(prev.map((p) => [p.productId, p]));
+
+      selectedProduct.forEach((p) => {
+        if (!map.has(p.productId)) {
+          map.set(p.productId, p);
+        } else {
+          const existing = map.get(p.productId);
+          const mergedVariants = [
+            ...existing.variants,
+            ...p.variants.filter(
+              (v) =>
+                !existing.variants.some((ev) => ev.variantId === v.variantId)
+            ),
+          ];
+
+          map.set(p.productId, {
+            ...existing,
+            variants: mergedVariants,
+          });
+        }
       });
-    } else {
-      setProduct((prev) => [...prev, ...selectedProduct]);
-    }
+
+      return Array.from(map.values());
+    });
+
     onClose();
   };
 
@@ -207,6 +263,11 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
       indeterminate: selectedCount > 0 && selectedCount < totalVariants,
     };
   };
+  const isProductAlreadyAdded = (productId) =>
+    product?.some((p) => p.productId === productId);
+
+  const getAddedVariants = (productId) =>
+    product?.find((p) => p.productId === productId)?.variants || [];
 
   return (
     <>
@@ -319,6 +380,7 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
               productList?.map((item, index) => {
                 const { checked, indeterminate } =
                   getProductSelectionState(item);
+                const alreadyAdded = isProductAlreadyAdded(item.id);
                 return (
                   <div key={index}>
                     <div
@@ -334,12 +396,11 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
                       }}
                     >
                       <Checkbox
-                        checked={checked}
-                        indeterminate={indeterminate}
+                        checked={checked || alreadyAdded}
+                        indeterminate={!alreadyAdded && indeterminate}
+                        disabled={alreadyAdded}
                         onChange={(e) => toggleProduct(item, e.target.checked)}
                         sx={{ padding: "0px", marginRight: "8px" }}
-                        height={24}
-                        width={24}
                       />
                       <img
                         src={
@@ -360,40 +421,51 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
                       orientation="vertical"
                     />
                     <div className="displayVariant">
-                      {item.variants.map((variant, ind) => (
-                        <>
-                          <div
-                            className="displayProduct"
-                            key={ind}
-                            style={{
-                              marginTop: "7.5px",
-                              marginBottom: "7.5px",
-                              display: "flex",
-                              alignItems: "center",
-                              marginRight: "12px",
-                              marginLeft: "48px",
-                            }}
-                          >
-                            <Checkbox
-                              checked={isVariantChecked(item.id, variant.id)}
-                              onChange={(e) =>
-                                toggleVariant(item, variant, e.target.checked)
-                              }
-                              sx={{ padding: "0px", marginRight: "8px" }}
-                              height={24}
-                              width={24}
+                      {item?.variants?.map((variant, ind) => {
+                        const addedVariants = getAddedVariants(item.id);
+                        const isVariantAlreadyAdded = addedVariants.some(
+                          (v) => v.variantId === variant.id
+                        );
+                        return (
+                          <>
+                            <div
+                              className="displayProduct"
+                              key={ind}
+                              style={{
+                                marginTop: "7.5px",
+                                marginBottom: "7.5px",
+                                display: "flex",
+                                alignItems: "center",
+                                marginRight: "12px",
+                                marginLeft: "48px",
+                              }}
+                            >
+                              <Checkbox
+                                checked={
+                                  isVariantAlreadyAdded ||
+                                  isVariantChecked(item.id, variant.id)
+                                }
+                                disabled={isVariantAlreadyAdded}
+                                onChange={(e) =>
+                                  toggleVariant(item, variant, e.target.checked)
+                                }
+                                sx={{ padding: "0px", marginRight: "8px" }}
+                              />
+                              <p style={{ margin: "0px", padding: "0px" }}>
+                                {variant.title}
+                              </p>
+                            </div>
+                            <Divider
+                              sx={{
+                                backgroundColor: "#0000001A",
+                                height: "1px",
+                              }}
+                              flexItem
+                              orientation="vertical"
                             />
-                            <p style={{ margin: "0px", padding: "0px" }}>
-                              {variant.title}
-                            </p>
-                          </div>
-                          <Divider
-                            sx={{ backgroundColor: "#0000001A", height: "1px" }}
-                            flexItem
-                            orientation="vertical"
-                          />
-                        </>
-                      ))}
+                          </>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -413,7 +485,9 @@ const ProductModal = ({ open, onClose, editedIndex, setProduct }) => {
             >
               <p>{`${selectedProduct?.length} selected`}</p>
               <div className="buttons">
-                <Button variant="outlined">Cancel</Button>
+                <Button variant="outlined" onClick={onClose}>
+                  Cancel
+                </Button>
                 <Button variant="contained" onClick={handleAdd}>
                   Add
                 </Button>

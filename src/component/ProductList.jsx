@@ -64,6 +64,7 @@ const ProductList = () => {
       );
     }
   };
+
   return (
     <>
       <div style={{ width: "100%", height: "100%" }}>
@@ -113,6 +114,7 @@ const ProductList = () => {
           onClose={() => handleModal("", -1)}
           editedIndex={editedIndex}
           setProduct={setProduct}
+          product={product}
         />
       )}
     </>

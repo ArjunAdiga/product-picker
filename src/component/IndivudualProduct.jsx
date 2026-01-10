@@ -125,7 +125,7 @@ const IndivudualProduct = ({ item, index, setProduct, handleModal }) => {
           onClick={handleRemoveItem}
         />
       </div>
-      {item.variants.length > 0 && (
+      {item.variants.length > 1 && (
         <div
           className="variant-toggle"
           onClick={() => setAccordionOpen((p) => !p)}
@@ -134,7 +134,7 @@ const IndivudualProduct = ({ item, index, setProduct, handleModal }) => {
           {accordionOpen ? <ChevronUp /> : <ChevronDown />}
         </div>
       )}
-      {accordionOpen && (
+      {(item?.variants?.length === 1 || accordionOpen) && (
         <div className="variant-list">
           <SortableContext
             items={item.variants.map(

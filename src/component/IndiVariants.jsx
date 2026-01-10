@@ -26,7 +26,7 @@ const IndiVariants = ({ variant, handleRemoveVariant, index, productId }) => {
       }}
     >
       <GripVertical
-        size={32}
+        size={24}
         color="grey"
         ref={setNodeRef}
         {...attributes}
